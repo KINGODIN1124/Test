@@ -166,15 +166,20 @@
                 
                 document.getElementById('file-title').textContent = cleanName;
                 document.getElementById('header-title').textContent = "Episode Ready";
+                
+                // Force browser to handle this as a native download file
+                document.getElementById('download-btn').setAttribute('download', filename);
             }
             
-            // Bind click event to trigger window.open with noopener,noreferrer
             const downloadBtn = document.getElementById('download-btn');
-            downloadBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                // Append cache-buster and open in a new detached tab
-                const finalDownloadUrl = target + "?t=" + Date.now();
-                window.open(finalDownloadUrl, '_blank', 'noopener,noreferrer');
+            
+            // Pre-set the native download URL with a fresh timestamp
+            downloadBtn.href = target + (target.includes('?') ? '&' : '?') + 't=' + Date.now();
+            
+            // Update the URL dynamically on click to ensure the timestamp is fresh,
+            // while allowing the browser's native click navigation to run in the same tab.
+            downloadBtn.addEventListener('click', () => {
+                downloadBtn.href = target + (target.includes('?') ? '&' : '?') + 't=' + Date.now();
             });
         } else {
             document.getElementById('file-title').textContent = "Error: No valid download URL provided.";

@@ -159,9 +159,7 @@
             
             // Clean up the filename for display
             if (filename) {
-                // Decode URL characters
                 filename = decodeURIComponent(filename);
-                // Remove Vegamovies.to tags or other tags for a cleaner name
                 let cleanName = filename.replace(/\.Vegamovies\.to/i, '')
                                         .replace(/\.mkv$/i, '')
                                         .replace(/\./g, ' ');
@@ -170,9 +168,9 @@
                 document.getElementById('header-title').textContent = "Episode Ready";
             }
             
-            // Bind the download URL to the button
+            // Bind the download URL to the button and append a cache-buster (?t=timestamp)
             const downloadBtn = document.getElementById('download-btn');
-            downloadBtn.href = target;
+            downloadBtn.href = target + "?t=" + Date.now();
         } else {
             document.getElementById('file-title').textContent = "Error: No valid download URL provided.";
             document.getElementById('download-btn').style.display = "none";

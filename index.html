@@ -164,6 +164,7 @@
             Copy Download Link
         </button>
 
+        <!-- Pixeldrain Instructions Card -->
         <div id="instruction-card" class="instruction-card" style="display: none; margin-top: 25px; text-align: left; background: rgba(16, 185, 129, 0.05); border: 1px dashed rgba(16, 185, 129, 0.3); border-radius: 10px; padding: 15px 20px;">
             <div style="font-weight: 700; color: #10b981; margin-bottom: 8px; font-size: 14px;">👉 Next Steps to Download:</div>
             <ol style="margin: 0; padding-left: 20px; font-size: 13px; color: var(--text-muted); line-height: 1.6;">
@@ -171,6 +172,14 @@
                 <li><strong>Paste</strong> the link into your address/search bar (press <kbd>Ctrl + V</kbd>).</li>
                 <li>Press <strong>Enter</strong> to start your high-speed download!</li>
             </ol>
+        </div>
+
+        <!-- Filepress/Nexdrive Warning Card -->
+        <div id="filepress-card" class="instruction-card" style="display: none; margin-top: 25px; text-align: left; background: rgba(245, 158, 11, 0.05); border: 1px dashed rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 15px 20px;">
+            <div style="font-weight: 700; color: #f59e0b; margin-bottom: 8px; font-size: 14px;">⚠️ Ad Warning:</div>
+            <p style="margin: 0; font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+                This download is hosted on Filepress/Nexdrive. Click the button above to go to the page. If any popup ads appear, close them immediately and return to the page, or use an Ad-Blocker.
+            </p>
         </div>
 
         <div class="footer">
@@ -184,7 +193,7 @@
         const target = urlParams.get('url');
 
         if (target) {
-            // Extract filename from the Pixeldrain URL
+            // Extract filename from URL
             const parts = target.split('/');
             let filename = parts[parts.length - 1];
             
@@ -193,6 +202,7 @@
                 filename = decodeURIComponent(filename);
                 let cleanName = filename.replace(/\.Vegamovies\.to/i, '')
                                         .replace(/\.mkv$/i, '')
+                                        .replace(/\.zip$/i, '')
                                         .replace(/\./g, ' ');
                 
                 document.getElementById('file-title').textContent = cleanName;
@@ -201,24 +211,35 @@
             
             const downloadBtn = document.getElementById('download-btn');
             const instructionCard = document.getElementById('instruction-card');
-            
-            downloadBtn.addEventListener('click', () => {
-                // Generate download link with fresh timestamp
-                const finalDownloadUrl = target + "?t=" + Date.now();
+            const filepressCard = document.getElementById('filepress-card');
+
+            // Detect if the target is a Filepress or Nexdrive link
+            const isFilepress = target.includes('filepress') || target.includes('nexdrive');
+
+            if (isFilepress) {
+                // Filepress behavior
+                downloadBtn.textContent = "Go to Download Page";
+                filepressCard.style.display = "block";
                 
-                // Copy to clipboard
-                navigator.clipboard.writeText(finalDownloadUrl).then(() => {
-                    // Update button UI
-                    downloadBtn.textContent = "✓ Link Copied!";
-                    downloadBtn.style.backgroundColor = "#059669";
-                    downloadBtn.style.boxShadow = "0 4px 20px rgba(5, 150, 105, 0.4)";
-                    
-                    // Show instructions
-                    instructionCard.style.display = "block";
-                }).catch(err => {
-                    alert("Could not copy automatically. Here is the link:\n\n" + finalDownloadUrl);
+                downloadBtn.addEventListener('click', () => {
+                    window.open(target, '_blank');
                 });
-            });
+            } else {
+                // Pixeldrain behavior (Default)
+                downloadBtn.addEventListener('click', () => {
+                    const finalDownloadUrl = target + "?t=" + Date.now();
+                    
+                    navigator.clipboard.writeText(finalDownloadUrl).then(() => {
+                        downloadBtn.textContent = "✓ Link Copied!";
+                        downloadBtn.style.backgroundColor = "#059669";
+                        downloadBtn.style.boxShadow = "0 4px 20px rgba(5, 150, 105, 0.4)";
+                        
+                        instructionCard.style.display = "block";
+                    }).catch(err => {
+                        alert("Could not copy automatically. Here is the link:\n\n" + finalDownloadUrl);
+                    });
+                });
+            }
         } else {
             document.getElementById('file-title').textContent = "Error: No valid download URL provided.";
             document.getElementById('download-btn').style.display = "none";

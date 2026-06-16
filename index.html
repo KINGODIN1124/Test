@@ -1,24 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <!-- Force the browser to drop the referrer -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Redirector</title>
+    <!-- Hardcoded referrer policy -->
     <meta name="referrer" content="no-referrer">
+</head>
+<body>
+    <p>Redirecting to secure download...</p>
     <script>
-        // Get the target URL from the query parameter (?url=...)
         const urlParams = new URLSearchParams(window.location.search);
         const target = urlParams.get('url');
         if (target) {
-            // Create a meta refresh element programmatically
-            const meta = document.createElement('meta');
-            meta.httpEquiv = "refresh";
-            meta.content = `0; url=${target}`;
-            document.head.appendChild(meta);
+            // Create a temporary link element
+            const a = document.createElement('a');
+            a.href = target;
+            // Force browser to drop referrer
+            a.rel = 'noreferrer';
+            a.referrerPolicy = 'no-referrer';
+            document.body.appendChild(a);
+            
+            // Trigger download/redirect
+            a.click();
+            a.remove();
         } else {
             document.write("Error: No download link provided.");
         }
     </script>
-</head>
-<body>
-    <p>Redirecting to secure download...</p>
 </body>
 </html>

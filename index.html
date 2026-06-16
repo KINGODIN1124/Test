@@ -176,9 +176,9 @@
 
         <!-- Filepress/Nexdrive Warning Card -->
         <div id="filepress-card" class="instruction-card" style="display: none; margin-top: 25px; text-align: left; background: rgba(245, 158, 11, 0.05); border: 1px dashed rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 15px 20px;">
-            <div style="font-weight: 700; color: #f59e0b; margin-bottom: 8px; font-size: 14px;">⚠️ Ad Warning:</div>
+            <div style="font-weight: 700; color: #f59e0b; margin-bottom: 8px; font-size: 14px;">⚠️ Note for Filepress downloads:</div>
             <p style="margin: 0; font-size: 13px; color: var(--text-muted); line-height: 1.5;">
-                This download is hosted on Filepress/Nexdrive. Click the button above to go to the page. If any popup ads appear, close them immediately and return to the page, or use an Ad-Blocker.
+                Download it from Direct download, and any ad appears so close that and get back to the original page or just use Ad-Blocker.
             </p>
         </div>
 
@@ -188,18 +188,30 @@
     </div>
 
     <script>
-        // Extract the target URL from the query parameter (?url=...)
+        // Extract the target URL and optional custom name from the query parameters
         const urlParams = new URLSearchParams(window.location.search);
         const target = urlParams.get('url');
+        const customName = urlParams.get('name');
 
         if (target) {
-            // Extract filename from URL
-            const parts = target.split('/');
-            let filename = parts[parts.length - 1];
+            let filename = '';
+            
+            if (customName) {
+                filename = customName;
+            } else {
+                // Extract filename from URL
+                const parts = target.split('/');
+                filename = parts[parts.length - 1];
+            }
             
             // Clean up the filename for display
             if (filename) {
                 filename = decodeURIComponent(filename);
+                // Detect raw alphanumeric hashes (typical for direct file IDs like Filepress/Nexdrive links)
+                if (!customName && (filename.match(/^[a-f0-9]{24}$/i) || (filename.match(/^[a-zA-Z0-9]+$/i) && filename.length > 12))) {
+                    filename = "Secure Video Download File";
+                }
+                
                 let cleanName = filename.replace(/\.Vegamovies\.to/i, '')
                                         .replace(/\.mkv$/i, '')
                                         .replace(/\.zip$/i, '')

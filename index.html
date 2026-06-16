@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Force the browser to drop the referrer -->
+    <meta name="referrer" content="no-referrer">
+    <script>
+        // Get the target URL from the query parameter (?url=...)
+        const urlParams = new URLSearchParams(window.location.search);
+        const target = urlParams.get('url');
+        if (target) {
+            // Create a meta refresh element programmatically
+            const meta = document.createElement('meta');
+            meta.httpEquiv = "refresh";
+            meta.content = `0; url=${target}`;
+            document.head.appendChild(meta);
+        } else {
+            document.write("Error: No download link provided.");
+        }
+    </script>
+</head>
+<body>
+    <p>Redirecting to secure download...</p>
+</body>
+</html>
